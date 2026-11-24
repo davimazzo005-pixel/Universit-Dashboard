@@ -1,1 +1,99 @@
-first file
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Universit Dashboard</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f3f5fa;color:#172033}
+header{background:#172554;color:white;padding:28px 20px}
+main{max-width:1000px;margin:auto;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.card{background:white;padding:20px;border-radius:15px;margin-bottom:15px}
+h2{margin-top:28px}
+small{color:#718096}
+input,button{padding:12px;border-radius:8px;border:1px solid #ddd;font-size:15px}
+button{background:#315efb;color:white;border:0;cursor:pointer}
+form{display:flex;gap:8px}
+form input{flex:1;min-width:0}
+li{padding:10px;border-bottom:1px solid #eee}
+.done{text-decoration:line-through;color:gray}
+</style>
+</head>
+<body>
+<header>
+<h1>🎓 La mia Università</h1>
+<p>Il tuo centro operativo universitario</p>
+</header>
+<main>
+<h2>Panoramica</h2>
+<div class="grid">
+<div class="card"><small>Università</small><h3>Bicocca</h3></div>
+<div class="card"><small>Corso di laurea</small><h3>Economia e Amministrazione delle Imprese</h3></div>
+<div class="card"><small>Attività da completare</small><h3 id="count">0</h3></div>
+</div>
+
+<h2>Le mie materie</h2>
+<div class="grid">
+<div class="card">📘 Matematica Generale</div>
+<div class="card">📗 Ragioneria</div>
+<div class="card">📙 Bilancio e Analisi Economico-Finanziaria</div>
+<div class="card">📕 Diritto Commerciale</div>
+<div class="card">📒 Management</div>
+<div class="card">📓 Statistica</div>
+</div>
+
+<h2>Agenda universitaria</h2>
+<div class="card">
+<form id="form">
+<input id="task" placeholder="Aggiungi un'attività..." required>
+<button>Aggiungi</button>
+</form>
+<ul id="list"></ul>
+</div>
+
+<h2>Obiettivo</h2>
+<div class="card">
+<h3>Un passo alla volta.</h3>
+<p>Organizza gli esami, pianifica lo studio e monitora i tuoi progressi.</p>
+</div>
+</main>
+<script>
+let tasks=JSON.parse(localStorage.getItem("tasks")||"[]");
+const list=document.getElementById("list");
+const count=document.getElementById("count");
+function render(){
+list.innerHTML="";
+tasks.forEach((t,i)=>{
+let li=document.createElement("li");
+let cb=document.createElement("input");
+cb.type="checkbox";
+cb.checked=t.done;
+cb.onchange=()=>{tasks[i].done=cb.checked;save()};
+let span=document.createElement("span");
+span.textContent=" "+t.text+" ";
+if(t.done)span.className="done";
+let del=document.createElement("button");
+del.textContent="Elimina";
+del.onclick=()=>{tasks.splice(i,1);save()};
+li.append(cb,span,del);
+list.append(li);
+});
+count.textContent=tasks.filter(t=>!t.done).length;
+}
+function save(){
+localStorage.setItem("tasks",JSON.stringify(tasks));
+render();
+}
+document.getElementById("form").onsubmit=e=>{
+e.preventDefault();
+let value=document.getElementById("task").value.trim();
+if(value){tasks.push({text:value,done:false});save();e.target.reset()}
+};
+render();
+</script>
+</body>
+</html>
+
